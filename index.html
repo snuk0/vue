@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Tabela z filtrem i sortowaniem</title>
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
+      <!-- Bootstrap działa standardowo z jQuery, ta wersja biblioteki integruje BS z VUE: -->
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+
+  <body>
+    <h1>Tabela reaktywna VUE</h1>
+     
+    <div id="app" role="group">
+        <b-form-input
+             type="text"
+             placeholder="Kategoria"
+             v-model="dodajKategoria"
+             :state="unikalnyKlucz"
+             @change="sprawdz"
+             aria-describedby="inputLiveHelp inputLiveFeedback"
+           >
+      </b-form-input>
+      <b-form-invalid-feedback id="inputLiveFeedback">
+          Nazwa kategorii musi być dłuższa od 0 i nie występować w bazie (sprawdzane przy wyjściu z pola).
+      </b-form-invalid-feedback>
+      <b-form-text id="inputLiveHelp">
+         Nazwa kategorii jest poprawna.
+       </b-form-text>
+       <b-btn class="mt-3" variant="outline-danger" block :disabled="!unikalnyKlucz">Zapisz</b-btn>
+
+ </div>
+     
+    <script>        
+      new Vue({
+          el: '#app',
+        data: {
+                dodajKategoria: '', //dodawana kategoria
+                unikalnyKlucz: false, //czy klucz jest unikalny?
+                //...
+                },
+         
+                methods: {
+                    sprawdz: function(value)
+                                        {
+                                        //sprawdza AJAX czy jest już taki w bazie
+                                    axios
+                                            .get('http://localhost/Vue/sprawdz.php?kategorie=' + value)
+                                            .then( response => this.unikalnyKlucz = !!response.data && value.length>0 ); //może zostać dodany
+                                        },
+                    //...
+                    }
+       
+      });
+</script>
+  </body>
+</html>
